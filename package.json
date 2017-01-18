@@ -1,0 +1,22 @@
+{
+  "name": "generate-nodes",
+  "version": "0.1.0",
+  "description": "Generate DOM Nodes from a variety of sources",
+  "main": "dist/generate-nodes.js",
+  "scripts": {
+    "build": "browserify --standalone generateNodes src/generate-nodes.ts -p [ tsify ] > dist/generate-nodes.js && uglifyjs -c -m -- dist/generate-nodes.js > dist/generate-nodes.min.js",
+    "pretest": "npm run build",
+    "test": "node test/index"
+  },
+  "repository": "https://github.com/Loilo/generate-nodes.git",
+  "author": "Florian Reuschel <florian@loilo.de>",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^13.3.0",
+    "jsdom": "^9.9.1",
+    "jsdom-global": "^2.1.1",
+    "tsify": "^3.0.0",
+    "typescript": "^2.1.5",
+    "uglify-js": "^2.7.5"
+  }
+}
