@@ -55,9 +55,19 @@ This libary is designed to run in the browser. It will define a global `generate
 However with DOM "emulators" like [jsdom](https://github.com/tmpvar/jsdom) you might as well use it in Node.js:
 
 ```javascript
+var window = require('jsdom').jsdom().defaultView
+var generateNodes = require('generate-nodes').withWindow(window)
+
+generateNodes( '<p>Hello Node.js!</p>' )
+```
+
+Note that using the `withWindow()` method just creates a bound version of the `generateNodes()` function. If you prefer you might as well pass the `window` object directly to it as second parameter:
+
+```javascript
+var window = require('jsdom').jsdom().defaultView
 var generateNodes = require('generate-nodes')
 
-generateNodes( ... )
+generateNodes( '<p>Hello Node.js!</p>', window )
 ```
 
 ## Usage

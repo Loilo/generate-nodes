@@ -1,11 +1,12 @@
 // Create a browser environment
-require('jsdom-global')()
+const window = require('jsdom').jsdom().defaultView
 
-const generateNodes = require('../dist/generate-nodes')
-const assertEqual = require('./assert-equal-nodes')
+const generateNodes = require('../dist/generate-nodes').withWindow(window)
+const assertEqual = require('./assert-equal-nodes')(window)
 
 // Create some preset Nodes to test against
-const { div_foo, p_bar, text_blank } = require('./preset-nodes')
+const { div_foo, p_bar, text_blank } = require('./preset-nodes')(window)
+
 
 // Empty
 assertEqual(generateNodes(''), [])
@@ -39,8 +40,8 @@ assertEqual(
 
 // Node
 assertEqual(
-  generateNodes(document.createElement('div')),
-  [ document.createElement('div') ]
+  generateNodes(window.document.createElement('div')),
+  [ window.document.createElement('div') ]
 )
 
 // Nested array of all
@@ -57,7 +58,9 @@ assertEqual(
       '<p>bar</p>'
     ],
     '',
-    document.createTextNode(' ')
+    window.document.createTextNode(' ')
   ]),
   [ p_bar, text_blank, div_foo, div_foo, p_bar, p_bar, text_blank ]
 )
+
+console.log('\x1b[32m', 'All tests have been passed.' ,'\x1b[0m')

@@ -16,20 +16,22 @@ var isNaiveMapping = function (input) { return input.constructor === Object; };
 /**
  * Turn an HTML string into a list of Nodes
  * @param input  The HTML string
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-var stringToNodes = function (input) {
+var stringToNodes = function (input, window) {
     // Basically put the HTML into a temporary DOM node and read its children
-    var div = document.createElement('div');
+    var div = window.document.createElement('div');
     div.innerHTML = input;
     return Array.prototype.slice.call(div.childNodes);
 };
 /**
  * Turn a Mapping into a list of Nodes
  * @param input  The Mapping to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-var mappingToNodes = function (input) {
+var mappingToNodes = function (input, window) {
     var keys = isNaiveMapping(input)
         ? Object.keys(input)
         : Array.from(input.keys());
@@ -38,8 +40,8 @@ var mappingToNodes = function (input) {
         if (nodeName.match(/^[a-zA-Z-]+$/)) {
             modNode = '<' + nodeName + '>';
         }
-        var container = stringToNodes(modNode).pop();
-        for (var _i = 0, _a = generateNodes(isNaiveMapping(input) ? input[nodeName] : input.get(nodeName)); _i < _a.length; _i++) {
+        var container = stringToNodes(modNode, window).pop();
+        for (var _i = 0, _a = generateNodes(isNaiveMapping(input) ? input[nodeName] : input.get(nodeName), window); _i < _a.length; _i++) {
             var node = _a[_i];
             container.appendChild(node);
         }
@@ -49,38 +51,51 @@ var mappingToNodes = function (input) {
 /**
  * Turn an Input into a list of Nodes
  * @param input  The Input to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-var inputToNodes = function (input) {
+var inputToNodes = function (input, window) {
     if (input instanceof Array)
-        return arrayToNodes(input);
-    else if (input instanceof Node)
+        return arrayToNodes(input, window);
+    else if (input instanceof window['Node'])
         return [input];
     else if (typeof input === 'string')
-        return stringToNodes(input);
+        return stringToNodes(input, window);
     else
-        return mappingToNodes(input);
+        return mappingToNodes(input, window);
 };
 /**
  * Turn an array of Inputs into a list of Nodes
  * @param input  The array of Inputs to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-var arrayToNodes = function (input) {
-    return input.reduce(function (carry, current) { return (carry.concat(inputToNodes(current))); }, []);
+var arrayToNodes = function (input, window) {
+    return input.reduce(function (carry, current) { return (carry.concat(inputToNodes(current, window))); }, []);
 };
 /**
  * Generate a list of Nodes from an according input
  * @param input  The stuff to convert
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-var generateNodes = function (input) {
+var originalWindow = typeof window === 'object' ? window : null;
+var generateNodes = function (input, window) {
+    var usedWindow = window || originalWindow;
+    if (usedWindow == null)
+        throw new Error('No `window` object provided');
     if (input == null)
         return [];
     else if (input instanceof Array)
-        return arrayToNodes(input);
+        return arrayToNodes(input, usedWindow);
     else
-        return arrayToNodes([input]);
+        return arrayToNodes([input], usedWindow);
+};
+/**
+ * Creates a version of the `generateNodes` function bound to a certain window object
+ */
+generateNodes['withWindow'] = function (window) {
+    return function (input) { return generateNodes(input, window); };
 };
 module.exports = generateNodes;
 

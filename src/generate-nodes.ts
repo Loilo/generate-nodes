@@ -90,11 +90,12 @@ type SingleInput = string | Node | Mapping
 /**
  * Turn an HTML string into a list of Nodes
  * @param input  The HTML string
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-const stringToNodes = (input: string): Node[] => {
+const stringToNodes = (input: string, window: Window): Node[] => {
   // Basically put the HTML into a temporary DOM node and read its children
-  const div = document.createElement('div')
+  const div = window.document.createElement('div')
   div.innerHTML = input
   return Array.prototype.slice.call(div.childNodes)
 }
@@ -102,9 +103,10 @@ const stringToNodes = (input: string): Node[] => {
 /**
  * Turn a Mapping into a list of Nodes
  * @param input  The Mapping to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-const mappingToNodes = (input: Mapping): Node[] => {
+const mappingToNodes = (input: Mapping, window: Window): Node[] => {
   const keys = isNaiveMapping(input)
     // Get the keys of a naive map
     ? Object.keys(input)
@@ -119,9 +121,9 @@ const mappingToNodes = (input: Mapping): Node[] => {
       modNode = '<' + nodeName + '>'
     }
 
-    const container = stringToNodes(modNode).pop()
+    const container = stringToNodes(modNode, window).pop()
 
-    for (const node of generateNodes(isNaiveMapping(input) ? input[nodeName] : input.get(nodeName))) {
+    for (const node of generateNodes(isNaiveMapping(input) ? input[nodeName] : input.get(nodeName), window)) {
       container.appendChild(node)
     }
     
@@ -132,35 +134,49 @@ const mappingToNodes = (input: Mapping): Node[] => {
 /**
  * Turn an Input into a list of Nodes
  * @param input  The Input to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-const inputToNodes = (input: Input): Node[] => {
-  if (input instanceof Array) return arrayToNodes(input)
-  else if (input instanceof Node) return [ input ]
-  else if (typeof input === 'string') return stringToNodes(input)
-  else return mappingToNodes(input)
+const inputToNodes = (input: Input, window: Window): Node[] => {
+  if (input instanceof Array) return arrayToNodes(input, window)
+  else if (input instanceof window['Node']) return [ <Node>input ]
+  else if (typeof input === 'string') return stringToNodes(input, window)
+  else return mappingToNodes(<Mapping>input, window)
 }
 
 /**
  * Turn an array of Inputs into a list of Nodes
  * @param input  The array of Inputs to be converted
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-const arrayToNodes = (input: Input[]): Node[] => {
+const arrayToNodes = (input: Input[], window: Window): Node[] => {
   return input.reduce<Node[]>((carry, current) => (
-    carry.concat(inputToNodes(current))
+    carry.concat(inputToNodes(current, window))
   ), [])
 }
 
 /**
  * Generate a list of Nodes from an according input
  * @param input  The stuff to convert
+ * @param window The Window object that contains the "Node" and "document" properties
  * @returns      A list of Nodes
  */
-const generateNodes = (input: Convertable): Node[] => {
-    if (input == null) return []
-    else if (input instanceof Array) return arrayToNodes(input)
-    else return arrayToNodes([ input ])
+const originalWindow = typeof window === 'object' ? window : null
+const generateNodes = (input: Convertable, window?: Window): Node[] => {
+  const usedWindow = window || originalWindow
+  if (usedWindow == null) throw new Error('No `window` object provided')
+
+  if (input == null) return []
+  else if (input instanceof Array) return arrayToNodes(input, usedWindow)
+  else return arrayToNodes([ input ], usedWindow)
+}
+
+/**
+ * Creates a version of the `generateNodes` function bound to a certain window object
+ */
+generateNodes['withWindow'] = (window: Window) => {
+  return (input: Convertable) => generateNodes(input, window)
 }
 
 export = generateNodes

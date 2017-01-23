@@ -14,7 +14,6 @@
   "devDependencies": {
     "browserify": "^13.3.0",
     "jsdom": "^9.9.1",
-    "jsdom-global": "^2.1.1",
     "tsify": "^3.0.0",
     "typescript": "^2.1.5",
     "uglify-js": "^2.7.5"
