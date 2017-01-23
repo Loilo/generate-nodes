@@ -46,7 +46,7 @@ $ yarn add generate-nodes
 ## Run
 
 ### Browser
-This function is designed to run in the browser. It will define a global `generateNodes()` function that will work as explained in the next section.
+This function is designed to run in the browser. It will define a global `generateNodes()` function that will work as explained in the *Usage* section.
 ```html
 <script src="node_modules/generate-nodes/dist/generate-nodes.min.js"></script>
 ```
