@@ -1,15 +1,15 @@
 # generate-nodes
-> JavaScript library to generate an array of DOM Nodes from pretty much anything
+> JavaScript function to generate an array of DOM Nodes from pretty much anything
 
 ## Motivation
-I found myself in the need of mixing up pieces of existing DOM with plain HTML markup. This library is the result of trying to make that task as pleasant as possible. It allows to create DOM structures with as little visual noise as possible. You can do things like this:
+I found myself in the need of mixing up pieces of existing DOM with plain HTML markup. This function is the result of trying to make that task as pleasant as possible. It allows to create DOM structures with as little visual noise as possible. You can do things like this:
 
 ```javascript
 var worldImage = document.createTextNode('World')
 worldImag.src = 'World.svg'
 
 generateNodes([
-  '<p>Library demo:</p>',
+  '<p>Function demo:</p>',
   {
     '<div>': [
       'Hello ',
@@ -24,7 +24,7 @@ That would generate an array with two entries (consider this pseudo code since t
 
 ```
 [
-  HTMLParagraphElement "Library demo:",
+  HTMLParagraphElement "Function demo:",
   HTMLDivElement "Hello ", HTMLImageElement[src="World.svg"], "!"
 ]
 ```
@@ -46,7 +46,7 @@ $ yarn add generate-nodes
 ## Run
 
 ### Browser
-This libary is designed to run in the browser. It will define a global `generateNodes()` function that will work as explained in the next section.
+This function is designed to run in the browser. It will define a global `generateNodes()` function that will work as explained in the next section.
 ```html
 <script src="node_modules/generate-nodes/dist/generate-nodes.min.js"></script>
 ```
