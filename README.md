@@ -8,7 +8,7 @@ This package is no longer maintained. Consider using [domify-template-strings](h
 I found myself in the need of mixing up pieces of existing DOM with plain HTML markup. This function is the result of trying to make that task as pleasant as possible. It allows to create DOM structures with as little visual noise as possible. You can do things like this:
 
 ```javascript
-var worldImage = document.createTextNode('World')
+var worldImage = document.createElement('img')
 worldImag.src = 'World.svg'
 
 generateNodes([
