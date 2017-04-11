@@ -1,6 +1,6 @@
 {
   "name": "generate-nodes",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Generate DOM Nodes from a variety of sources",
   "main": "dist/generate-nodes.js",
   "scripts": {
