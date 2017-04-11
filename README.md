@@ -1,6 +1,9 @@
 # generate-nodes
 > JavaScript function to generate an array of DOM Nodes from pretty much anything
 
+# Note
+This package is no longer maintained. Consider using [domify-template-strings](https://www.npmjs.com/package/domify-template-strings), its official successor.
+
 ## Motivation
 I found myself in the need of mixing up pieces of existing DOM with plain HTML markup. This function is the result of trying to make that task as pleasant as possible. It allows to create DOM structures with as little visual noise as possible. You can do things like this:
 
