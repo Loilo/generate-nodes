@@ -92,12 +92,24 @@ var generateNodes = function (input, window) {
         return arrayToNodes([input], usedWindow);
 };
 /**
+ * Create a version of the generateNodes function that returns a monkey-patched array
+ */
+var exportableGenerator = function (input, window) {
+    var result = generateNodes(input, window);
+    result.appendTo = function (element) {
+        result.forEach(function (node) {
+            element.appendChild(node);
+        });
+    };
+    return result;
+};
+/**
  * Creates a version of the `generateNodes` function bound to a certain window object
  */
-generateNodes['withWindow'] = function (window) {
+exportableGenerator['withWindow'] = function (window) {
     return function (input) { return generateNodes(input, window); };
 };
-module.exports = generateNodes;
+module.exports = exportableGenerator;
 
 },{}]},{},[1])(1)
 });
