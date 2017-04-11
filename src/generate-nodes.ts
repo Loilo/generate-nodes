@@ -172,11 +172,33 @@ const generateNodes = (input: Convertable, window?: Window): Node[] => {
   else return arrayToNodes([ input ], usedWindow)
 }
 
+interface Appendable {
+  appendTo: (element: HTMLElement) => void,
+}
+
+type AppendableNodeList = Node[] & Appendable
+
+/**
+ * Create a version of the generateNodes function that returns a monkey-patched array
+ */
+const exportableGenerator = (input: Convertable, window?: Window): AppendableNodeList => {
+  const result = <AppendableNodeList>generateNodes(input, window)
+
+  result.appendTo = (element: HTMLElement) => {
+    result.forEach(node => {
+      element.appendChild(node)
+    })
+  }
+
+  return result
+}
+
 /**
  * Creates a version of the `generateNodes` function bound to a certain window object
  */
-generateNodes['withWindow'] = (window: Window) => {
+exportableGenerator['withWindow'] = (window: Window) => {
   return (input: Convertable) => generateNodes(input, window)
 }
 
-export = generateNodes
+
+export = exportableGenerator

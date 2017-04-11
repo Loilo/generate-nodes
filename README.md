@@ -71,7 +71,9 @@ generateNodes( '<p>Hello Node.js!</p>', window )
 ```
 
 ## Usage
-The `generateNode()` function takes several possible types of input.
+The `generateNode()` function takes several possible types of input and returns an array of `Node` objects.
+
+This array also gets a `.appendTo(element)` method monkey-patched onto it so the resulting nodes can easily be attached to an existing DOM node.
 
 ### Arrays
 You can provide an array of literally anything listed here to nest your content as needed.
